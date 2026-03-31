@@ -10,3 +10,4 @@ starlette
 itsdangerous
 sqlalchemy
 passlib
+python-multipart
