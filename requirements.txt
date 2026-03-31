@@ -6,3 +6,4 @@ xlrd
 fastapi
 uvicorn
 jinja2
+starlette
