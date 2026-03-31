@@ -1,0 +1,54 @@
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.form-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.styled-table thead th {
+    background: var(--ine-vino);
+    color: #fff;
+    text-align: left;
+    padding: 14px 12px;
+    font-size: 0.95rem;
+}
+
+.styled-table tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e8edf5;
+    vertical-align: middle;
+}
+
+.table-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.table-actions form {
+    margin: 0;
+}
+
+@media (max-width: 960px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .table-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

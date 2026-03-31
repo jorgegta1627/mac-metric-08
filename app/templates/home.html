@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-page">
+
+    <div class="dashboard-hero mb-4">
+        <div class="dashboard-hero__content">
+            <p class="dashboard-eyebrow mb-2"></p>
+            <h1 class="dashboard-hero__title mb-2">Dashboard operativo</h1>
+            <p class="dashboard-hero__subtitle mb-0">
+                Consulta y análisis de productividad operativa por MAC, fecha y funcionario.
+            </p>
+        </div>
+    </div>
+
+    <div class="card upload-card mb-4">
+        <div class="card-body">
+            <div class="section-head mb-3">
+                <h5 class="section-title mb-0">Carga de archivos</h5>
+            </div>
+
+            {% if success %}
+                <div class="alert alert-success">{{ success }}</div>
+            {% endif %}
+
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+
+            <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+                <input type="file" name="archivo" class="form-control" required>
+                <button type="submit" class="btn btn-primary">Subir archivo</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <aside class="dashboard-sidebar">
+            <div class="card dashboard-card query-card">
+                <div class="card-body">
+                    <div class="section-head mb-3">
+                        <h5 class="section-title mb-0">Consulta operativa</h5>
+                    </div>
+
+                    <form method="get" action="/dashboard" class="query-form">
+                        <div class="mb-3">
+                            <label for="mac" class="form-label">MAC</label>
+                            <select name="mac" id="mac" class="form-select">
+                                <option value="">Último disponible</option>
+                                <option value="090852" {% if mac_seleccionado == "090852" %}selected{% endif %}>090852</option>
+                                <option value="090853" {% if mac_seleccionado == "090853" %}selected{% endif %}>090853</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="fecha" class="form-label">Fecha operativa</label>
+                            <input
+                                type="date"
+                                name="fecha"
+                                id="fecha"
+                                class="form-control"
+                                value="{{ fecha_seleccionada }}"
+                            >
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Consultar</button>
+                            <a href="/dashboard" class="btn btn-soft">Limpiar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="metrics-grid mb-4">
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <p class="metric-label">Total trámites</p>
+                        <p class="metric-value">{{ resumen.total_tramites }}</p>
+                    </div>
+                </div>
+
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <p class="metric-label">Promedio del MAC</p>
+                        <p class="metric-value">{{ resumen.promedio_mac }}</p>
+                    </div>
+                </div>
+
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <p class="metric-label">Total entregas</p>
+                        <p class="metric-value">{{ resumen.total_entregas }}</p>
+                    </div>
+                </div>
+
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <p class="metric-label">Relación entregas / trámites</p>
+                        <p class="metric-value">{{ resumen.relacion_global }}</p>
+                        <small class="text-muted">{{ resumen.total_entregas }} / {{ resumen.total_tramites }}</small>
+                    </div>
+                </div>
+
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <p class="metric-label">Funcionarios activos</p>
+                        <p class="metric-value">{{ resumen.funcionarios_activos }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card dashboard-card mb-4">
+                <div class="card-body">
+                    <div class="section-head mb-3">
+                        <h5 class="section-title mb-0">Comparativo por funcionario</h5>
+                    </div>
+
+                    {% if resumen.ranking_funcionarios %}
+                        <div class="table-responsive">
+                            <table class="table dashboard-table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Funcionario</th>
+                                        <th>Trámites</th>
+                                        <th>Promedio</th>
+                                        <th>Atípicos</th>
+                                        <th>Desempeño</th>
+                                        <th>Terminales</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in resumen.ranking_funcionarios %}
+                                    <tr>
+                                        <td>
+                                            <a href="/funcionario/{{ item.funcionario | urlencode }}{% if mac_seleccionado or fecha_seleccionada %}?{% if mac_seleccionado %}mac={{ mac_seleccionado }}{% endif %}{% if mac_seleccionado and fecha_seleccionada %}&{% endif %}{% if fecha_seleccionada %}fecha={{ fecha_seleccionada }}{% endif %}{% endif %}">
+                                                 {{ item.funcionario }}
+                                            </a>
+                                        </td>
+                                        <td>{{ item.tramites }}</td>
+                                        <td>{{ item.promedio_tiempo }}</td>
+                                        <td>{{ item.casos_atipicos }}</td>
+                                        <td>
+                                            {% if item.desempeno == "Alto" %}
+                                                <span class="badge bg-success">Alto</span>
+                                            {% elif item.desempeno == "Medio" %}
+                                                <span class="badge bg-warning text-dark">Medio</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Bajo</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ item.terminales }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No hay datos disponibles para mostrar con los filtros seleccionados.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card dashboard-card source-card">
+                <div class="card-body">
+                    <div class="section-head mb-3">
+                        <h6 class="section-title section-title--sm mb-0">Contexto de la consulta</h6>
+                    </div>
+
+                    <div class="source-grid">
+                        <div class="source-item">
+                            <span class="source-label">SOL (trámites)</span>
+                            <span class="source-value">{{ resumen.fuente_sol }}</span>
+                        </div>
+
+                        <div class="source-item">
+                            <span class="source-label">CR (entregas)</span>
+                            <span class="source-value">{{ resumen.fuente_cr }}</span>
+                        </div>
+
+                        <div class="source-item">
+                            <span class="source-label">MAC consultado</span>
+                            <span class="source-value">{{ resumen.mac }}</span>
+                        </div>
+
+                        <div class="source-item">
+                            <span class="source-label">Fecha operativa</span>
+                            <span class="source-value">{{ resumen.fecha_operativa }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+{% if cr_resultado and cr_resultado.success %}
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Entregas operativas (CR)</h5>
+        <p><strong>Archivo:</strong> {{ cr_resultado.archivo }}</p>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-3">
+                <div class="border rounded p-3">
+                    <div>Total entregas</div>
+                    <div class="fs-4">{{ cr_resultado.metricas.total_entregas }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="border rounded p-3">
+                    <div>Promedio tiempo</div>
+                    <div class="fs-4">{{ cr_resultado.metricas.promedio_tiempo }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="border rounded p-3">
+                    <div>Tiempo mínimo</div>
+                    <div class="fs-4">{{ cr_resultado.metricas.tiempo_minimo }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="border rounded p-3">
+                    <div>Tiempo máximo</div>
+                    <div class="fs-4">{{ cr_resultado.metricas.tiempo_maximo }}</div>
+                </div>
+            </div>
+        </div>
+
+        <p><strong>Atípicos:</strong> {{ cr_resultado.metricas.atipicos }}</p>
+
+        <h6 class="mt-4">Distribución por terminal</h6>
+        <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>Terminal</th>
+                        <th>Entregas</th>
+                        <th>Promedio</th>
+                        <th>Mínimo</th>
+                        <th>Máximo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if cr_resultado.metricas.por_terminal %}
+                        {% for item in cr_resultado.metricas.por_terminal %}
+                        <tr>
+                            <td>{{ item.terminal }}</td>
+                            <td>{{ item.entregas }}</td>
+                            <td>{{ item.promedio }}</td>
+                            <td>{{ item.minimo }}</td>
+                            <td>{{ item.maximo }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No hay datos por terminal.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% elif cr_resultado %}
+<div class="alert alert-warning mt-4">
+    No fue posible cargar CR: {{ cr_resultado.error }}
+</div>
+{% endif %}
+{% endblock %}
