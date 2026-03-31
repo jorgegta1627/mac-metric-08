@@ -11,3 +11,4 @@ itsdangerous
 sqlalchemy
 passlib
 python-multipart
+python-multipart
