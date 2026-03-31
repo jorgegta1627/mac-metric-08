@@ -8,3 +8,4 @@ uvicorn
 jinja2
 starlette
 itsdangerous
+sqlalchemy
