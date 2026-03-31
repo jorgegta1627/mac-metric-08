@@ -16,9 +16,9 @@ pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 @router.get("/login", response_class=HTMLResponse)
 def login_view(request: Request):
     return templates.TemplateResponse(
-        "login.html",
-        {
-            "request": request,
+        request=request,
+        name="login.html",
+        context={
             "db_status": "Conectada" if test_db_connection() else "Sin conexión",
             "message": None,
             "message_type": None,
@@ -39,7 +39,7 @@ def login_submit(
         with engine.connect() as conn:
             user = conn.execute(
                 text("""
-                    SELECT 
+                    SELECT
                         u.id,
                         u.username,
                         u.nombre_completo,
@@ -53,20 +53,25 @@ def login_submit(
                 """),
                 {"username": username}
             ).mappings().first()
+
         if not user:
             message = "Usuario o contraseña incorrectos."
             message_type = "error"
+
         elif not user["activo"]:
             message = "El usuario se encuentra inactivo."
             message_type = "error"
+
         elif not pwd_context.verify(password, user["password_hash"]):
             message = "Usuario o contraseña incorrectos."
             message_type = "error"
+
         else:
             request.session["user"] = user["username"]
             request.session["role_id"] = user["role_id"]
             request.session["role_name"] = user["role_name"]
             request.session["last_activity"] = datetime.now().isoformat()
+
             return RedirectResponse(url="/dashboard", status_code=303)
 
     except Exception as e:
@@ -74,9 +79,9 @@ def login_submit(
         message_type = "error"
 
     return templates.TemplateResponse(
-        "login.html",
-        {
-            "request": request,
+        request=request,
+        name="login.html",
+        context={
             "db_status": "Conectada" if test_db_connection() else "Sin conexión",
             "message": message,
             "message_type": message_type,
