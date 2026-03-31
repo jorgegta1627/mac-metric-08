@@ -27,6 +27,12 @@
                 Estado de base de datos: <strong>{{ db_status }}</strong>
             </div>
 
+            {% if message %}
+            <div class="login-message login-message-{{ message_type }}">
+                {{ message }}
+            </div>
+            {% endif %}
+
             <form method="post" action="/login" class="login-form">
                 <div class="form-group">
                     <label for="username">Usuario</label>
