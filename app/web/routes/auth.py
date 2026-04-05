@@ -46,7 +46,7 @@ def login_submit(
                         u.password_hash,
                         u.role_id,
                         r.nombre AS role_name,
-                        u.activo
+                        u.activo,
                         u.mac_asignado
                     FROM macmetric.usuarios u
                     JOIN macmetric.roles r ON r.id = u.role_id
