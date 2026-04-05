@@ -78,5 +78,6 @@ def dashboard_view(request: Request, mac: str = None, fecha: str = None):
         "usuario": request.session.get("user"),
         "current_user": request.session.get("user"),
         "role_id": request.session.get("role_id"),
-    },
+        "mac_asignado": request.session.get("mac_asignado"),
+            },
     )
