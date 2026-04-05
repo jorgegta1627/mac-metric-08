@@ -76,5 +76,7 @@ def dashboard_view(request: Request, mac: str = None, fecha: str = None):
         "mac_seleccionado": mac_seleccionado,
         "fecha_seleccionada": fecha_seleccionada,
         "usuario": request.session.get("user"),
+        "current_user": request.session.get("user"),
+        "role_id": request.session.get("role_id"),
     },
     )
