@@ -28,17 +28,19 @@
         {% endif %}
 
         <div class="mb-3">
-            <label class="form-label">Archivo SOL (trámites)</label>
-            <form action="/upload" method="post" enctype="multipart/form-data" class="d-flex gap-2 align-items-center">
-                <input type="file" name="archivo" class="form-control" required>
-                <button type="submit" class="btn btn-primary">Subir SOL</button>
-                <span class="badge bg-secondary">Pendiente</span>
-            </form>
-        </div>
+        <label class="form-label">Archivo SOL (trámites)</label>
+        <form action="/upload" method="post" enctype="multipart/form-data" class="d-flex gap-2 align-items-center">
+            <input type="hidden" name="expected_tipo" value="TIEMPOS_SOL">
+            <input type="file" name="archivo" class="form-control" required>
+            <button type="submit" class="btn btn-primary">Subir SOL</button>
+            <span class="badge bg-secondary">Pendiente</span>
+        </form>
+    </div>
 
         <div class="mb-3">
             <label class="form-label">Archivo CR (entregas)</label>
             <form action="/upload" method="post" enctype="multipart/form-data" class="d-flex gap-2 align-items-center">
+                <input type="hidden" name="expected_tipo" value="TIEMPOS_CR">
                 <input type="file" name="archivo" class="form-control" required>
                 <button type="submit" class="btn btn-primary">Subir CR</button>
                 <span class="badge bg-secondary">Pendiente</span>

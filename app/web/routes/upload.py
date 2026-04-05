@@ -1,7 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 
-from fastapi import APIRouter, Request, UploadFile, File
+from fastapi import APIRouter, Request, UploadFile, File, Form
 from fastapi.responses import RedirectResponse
 from sqlalchemy import text
 
@@ -16,6 +16,7 @@ from backend.services.sol_repository import guardar_sol_en_bd
 from app.parsers.siirfe_parser_cr import parse_siirfe_cr_file
 from backend.services.cr_cleaner import limpiar_reporte_cr
 from backend.services.cr_repository import guardar_cr_en_bd
+
 router = APIRouter()
 
 BASE_DIR = Path(__file__).resolve().parents[3]
@@ -30,8 +31,11 @@ def validar_sesion(request: Request):
 
 
 @router.post("/upload")
-async def subir_archivo(request: Request, archivo: UploadFile = File(...)):
-    sesion = validar_sesion(request)
+async def subir_archivo(
+    request: Request,
+    expected_tipo: str = Form(None),
+    archivo: UploadFile = File(...)
+):
     if sesion:
         return sesion
 

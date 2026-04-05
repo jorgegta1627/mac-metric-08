@@ -43,7 +43,6 @@ def obtener_archivo_sol(mac=None, fecha_operativa=None):
     WHERE {where_sql}
     ORDER BY
         fecha_operativa DESC NULLS LAST,
-        fecha_carga DESC NULLS LAST,
         id DESC
     LIMIT 1
     """
