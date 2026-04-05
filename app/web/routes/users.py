@@ -80,17 +80,17 @@ def usuarios_page(request: Request, edit_id: int | None = None):
             ).mappings().first()
 
     return templates.TemplateResponse(
-        "users.html",
-        {
-            "request": request,
-            "roles": roles,
-            "usuarios": usuarios,
-            "usuario_edicion": usuario_edicion,
-            "success": request.query_params.get("success"),
-            "error": request.query_params.get("error"),
-            "current_user": request.session.get("user"),
-            "role_id": request.session.get("role_id"),
-        },
+    request=request,
+    name="users.html",
+    context={
+        "roles": roles,
+        "usuarios": usuarios,
+        "usuario_edicion": usuario_edicion,
+        "success": request.query_params.get("success"),
+        "error": request.query_params.get("error"),
+        "current_user": request.session.get("user"),
+        "role_id": request.session.get("role_id"),
+    },
     )
 
 

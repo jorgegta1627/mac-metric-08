@@ -66,15 +66,15 @@ def dashboard_view(request: Request, mac: str = None, fecha: str = None):
     }
 
     return templates.TemplateResponse(
-        "home.html",
-        {
-            "request": request,
-            "success": success,
-            "error": error,
-            "resumen": resumen,
-            "cr_resultado": cr_resultado,
-            "mac_seleccionado": mac_seleccionado,
-            "fecha_seleccionada": fecha_seleccionada,
-            "usuario": request.session.get("user"),
-        }
-    )
+    request=request,
+    name="home.html",
+    context={
+        "success": success,
+        "error": error,
+        "resumen": resumen,
+        "cr_resultado": cr_resultado,
+        "mac_seleccionado": mac_seleccionado,
+        "fecha_seleccionada": fecha_seleccionada,
+        "usuario": request.session.get("user"),
+    },
+)

@@ -39,9 +39,9 @@ def home(request: Request):
     }
 
     return templates.TemplateResponse(
-        "home.html",
-        {
-            "request": request,
-            "resumen": resumen,
-        },
+    request=request,
+    name="home.html",
+    context={
+        "resumen": resumen,
+    },
     )

@@ -32,26 +32,26 @@ def detalle_funcionario(
 
     if not detalle:
         return templates.TemplateResponse(
-            "funcionario_detalle.html",
-            {
-                "request": request,
-                "detalle": None,
-                "nombre_funcionario": nombre_funcionario,
-                "mac_seleccionado": mac,
-                "fecha_seleccionada": fecha,
-                "error": "No se encontraron datos para el funcionario seleccionado.",
-                "tipo_seleccionado": tipo,
-            }
-        )
-
-    return templates.TemplateResponse(
-        "funcionario_detalle.html",
-        {
-            "request": request,
-            "detalle": detalle,
+        request=request,
+        name="funcionario_detalle.html",
+        context={
+            "detalle": None,
             "nombre_funcionario": nombre_funcionario,
             "mac_seleccionado": mac,
             "fecha_seleccionada": fecha,
-            "error": None,
-        }
+            "error": "No se encontraron datos para el funcionario seleccionado.",
+            "tipo_seleccionado": tipo,
+        },
+        )
+
+    return templates.TemplateResponse(
+    request=request,
+    name="funcionario_detalle.html",
+    context={
+        "detalle": detalle,
+        "nombre_funcionario": nombre_funcionario,
+        "mac_seleccionado": mac,
+        "fecha_seleccionada": fecha,
+        "error": None,
+    },
     )
