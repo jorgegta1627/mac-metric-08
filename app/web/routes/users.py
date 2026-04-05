@@ -40,10 +40,10 @@ def validar_admin(request: Request):
     if sesion:
         return sesion
 
-    role_name = request.session.get("role_name")
+    role_id = request.session.get("role_id")
 
-    if not role_name or role_name.strip().upper() != "ADMIN":
-        return RedirectResponse(url="/dashboard", status_code=303)
+    if role_id != 1:
+     return RedirectResponse(url="/dashboard", status_code=303)
 
     return None
 
