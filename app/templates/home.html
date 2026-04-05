@@ -59,13 +59,13 @@
 </div>
 
 {% if resumen %}
-<div class="card dashboard-card mb-4">
-    <div class="card-body py-3">
+<div class="card dashboard-card mb-3">
+    <div class="card-body py-2 px-3">
         <div class="section-head mb-3">
-            <h6 class="section-title section-title--sm mb-0">Resumen rápido de la consulta</h6>
+            <h6 class="section-title section-title--sm mb-0">Resumen de la consulta</h6>
         </div>
 
-        <div class="source-grid">
+        <div class="source-grid" style="font-size: 0.85rem;">
             <div class="source-item">
                 <span class="source-label">SOL (trámites)</span>
                 <span class="source-value">{{ resumen.fuente_sol }}</span>
@@ -264,39 +264,7 @@
                 </div>
             </div>
 
-            <div class="card dashboard-card source-card">
-                <div class="card-body">
-                    <div class="section-head mb-3">
-                        <h6 class="section-title section-title--sm mb-0">Contexto de la consulta</h6>
-                    </div>
-
-                    <div class="source-grid">
-                        <div class="source-item">
-                            <span class="source-label">SOL (trámites)</span>
-                            <span class="source-value">{{ resumen.fuente_sol }}</span>
-                        </div>
-
-                        <div class="source-item">
-                            <span class="source-label">CR (entregas)</span>
-                            <span class="source-value">{{ resumen.fuente_cr }}</span>
-                        </div>
-
-                        <div class="source-item">
-                            <span class="source-label">MAC consultado</span>
-                            <span class="source-value">{{ resumen.mac }}</span>
-                        </div>
-
-                        <div class="source-item">
-                            <span class="source-label">Fecha operativa</span>
-                            <span class="source-value">{{ resumen.fecha_operativa }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-</div>
-
+            
 {% if cr_resultado and cr_resultado.success %}
 <div class="card shadow-sm mt-4">
     <div class="card-body">
