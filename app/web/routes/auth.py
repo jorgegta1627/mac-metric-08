@@ -47,6 +47,7 @@ def login_submit(
                         u.role_id,
                         r.nombre AS role_name,
                         u.activo
+                        u.mac_asignado
                     FROM macmetric.usuarios u
                     JOIN macmetric.roles r ON r.id = u.role_id
                     WHERE u.username = :username
@@ -71,6 +72,7 @@ def login_submit(
             request.session["role_id"] = user["role_id"]
             request.session["role_name"] = user["role_name"]
             request.session["last_activity"] = datetime.now().isoformat()
+            request.session["mac_asignado"] = user["mac_asignado"]
 
             return RedirectResponse(url="/dashboard", status_code=303)
 
