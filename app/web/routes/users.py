@@ -43,7 +43,7 @@ def validar_admin(request: Request):
     role_id = request.session.get("role_id")
 
     if role_id != 1:
-     return RedirectResponse(url="/dashboard", status_code=303)
+        return RedirectResponse(url="/dashboard", status_code=303)
 
     return None
 
@@ -61,7 +61,7 @@ def usuarios_page(request: Request, edit_id: int | None = None):
 
         usuarios = conn.execute(
             text("""
-                SELECT u.id, u.username, u.nombre_completo, u.role_id, r.nombre AS rol, u.activo
+                SELECT u.id, u.username, u.nombre_completo, u.role_id, r.nombre AS rol, u.activo, u.mac_asignado
                 FROM macmetric.usuarios u
                 JOIN macmetric.roles r ON r.id = u.role_id
                 ORDER BY u.id
@@ -72,7 +72,7 @@ def usuarios_page(request: Request, edit_id: int | None = None):
         if edit_id:
             usuario_edicion = conn.execute(
                 text("""
-                    SELECT id, username, nombre_completo, role_id, activo
+                    SELECT id, username, nombre_completo, role_id, activo, mac_asignado
                     FROM macmetric.usuarios
                     WHERE id = :id
                 """),
@@ -80,17 +80,17 @@ def usuarios_page(request: Request, edit_id: int | None = None):
             ).mappings().first()
 
     return templates.TemplateResponse(
-    request=request,
-    name="users.html",
-    context={
-        "roles": roles,
-        "usuarios": usuarios,
-        "usuario_edicion": usuario_edicion,
-        "success": request.query_params.get("success"),
-        "error": request.query_params.get("error"),
-        "current_user": request.session.get("user"),
-        "role_id": request.session.get("role_id"),
-    },
+        request=request,
+        name="users.html",
+        context={
+            "roles": roles,
+            "usuarios": usuarios,
+            "usuario_edicion": usuario_edicion,
+            "success": request.query_params.get("success"),
+            "error": request.query_params.get("error"),
+            "current_user": request.session.get("user"),
+            "role_id": request.session.get("role_id"),
+        },
     )
 
 
@@ -101,6 +101,7 @@ def crear_usuario(
     password: str = Form(...),
     nombre: str = Form(...),
     rol_id: int = Form(...),
+    mac_asignado: str = Form(None),
 ):
     permiso = validar_admin(request)
     if permiso:
@@ -109,18 +110,21 @@ def crear_usuario(
     try:
         password_hash = pwd_context.hash(password)
 
+        mac_valor = mac_asignado.strip() if mac_asignado and mac_asignado.strip() else None
+
         with engine.begin() as conn:
             conn.execute(
                 text("""
                     INSERT INTO macmetric.usuarios
-                    (username, nombre_completo, password_hash, role_id, activo)
-                    VALUES (:username, :nombre, :password_hash, :rol_id, true)
+                    (username, nombre_completo, password_hash, role_id, activo, mac_asignado)
+                    VALUES (:username, :nombre, :password_hash, :rol_id, true, :mac_asignado)
                 """),
                 {
                     "username": username.strip(),
                     "nombre": nombre.strip(),
                     "password_hash": password_hash,
                     "rol_id": rol_id,
+                    "mac_asignado": mac_valor,
                 }
             )
 
@@ -148,6 +152,7 @@ def editar_usuario(
     rol_id: int = Form(...),
     activo: str = Form(...),
     password: str = Form(""),
+    mac_asignado: str = Form(None),
 ):
     permiso = validar_admin(request)
     if permiso:
@@ -155,6 +160,7 @@ def editar_usuario(
 
     try:
         activo_bool = activo == "true"
+        mac_valor = mac_asignado.strip() if mac_asignado and mac_asignado.strip() else None
 
         with engine.begin() as conn:
             if password.strip():
@@ -166,7 +172,8 @@ def editar_usuario(
                             nombre_completo = :nombre,
                             role_id = :rol_id,
                             activo = :activo,
-                            password_hash = :password_hash
+                            password_hash = :password_hash,
+                            mac_asignado = :mac_asignado
                         WHERE id = :id
                     """),
                     {
@@ -176,6 +183,7 @@ def editar_usuario(
                         "rol_id": rol_id,
                         "activo": activo_bool,
                         "password_hash": password_hash,
+                        "mac_asignado": mac_valor,
                     }
                 )
             else:
@@ -185,7 +193,8 @@ def editar_usuario(
                         SET username = :username,
                             nombre_completo = :nombre,
                             role_id = :rol_id,
-                            activo = :activo
+                            activo = :activo,
+                            mac_asignado = :mac_asignado
                         WHERE id = :id
                     """),
                     {
@@ -194,6 +203,7 @@ def editar_usuario(
                         "nombre": nombre.strip(),
                         "rol_id": rol_id,
                         "activo": activo_bool,
+                        "mac_asignado": mac_valor,
                     }
                 )
 
