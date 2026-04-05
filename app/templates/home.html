@@ -7,6 +7,7 @@
         <div class="dashboard-hero__content">
             <p class="dashboard-eyebrow mb-2"></p>
             <h1 class="dashboard-hero__title mb-2">Dashboard operativo</h1>
+
             <p class="dashboard-hero__subtitle mb-0">
                 Consulta y análisis de productividad operativa por MAC, fecha y funcionario.
             </p>
@@ -57,7 +58,38 @@
     </div>
 </div>
 
-    <div class="dashboard-grid">
+{% if resumen %}
+<div class="card dashboard-card mb-4">
+    <div class="card-body py-3">
+        <div class="section-head mb-3">
+            <h6 class="section-title section-title--sm mb-0">Resumen rápido de la consulta</h6>
+        </div>
+
+        <div class="source-grid">
+            <div class="source-item">
+                <span class="source-label">SOL (trámites)</span>
+                <span class="source-value">{{ resumen.fuente_sol }}</span>
+            </div>
+
+            <div class="source-item">
+                <span class="source-label">CR (entregas)</span>
+                <span class="source-value">{{ resumen.fuente_cr }}</span>
+            </div>
+
+            <div class="source-item">
+                <span class="source-label">MAC consultado</span>
+                <span class="source-value">{{ resumen.mac }}</span>
+            </div>
+
+            <div class="source-item">
+                <span class="source-label">Fecha operativa</span>
+                <span class="source-value">{{ resumen.fecha_operativa }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="dashboard-grid">
         <aside class="dashboard-sidebar">
             <div class="card dashboard-card query-card">
                 <div class="card-body">
