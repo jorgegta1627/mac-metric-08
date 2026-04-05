@@ -70,6 +70,21 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="mac_asignado">MAC asignado</label>
+                            <select id="mac_asignado" name="mac_asignado">
+                                <option value="" {% if not usuario_edicion.mac_asignado %}selected{% endif %}>
+                                    -- Sin restricción (Admin) --
+                                </option>
+                                <option value="090852" {% if usuario_edicion.mac_asignado == '090852' %}selected{% endif %}>
+                                    090852
+                                </option>
+                                <option value="090853" {% if usuario_edicion.mac_asignado == '090853' %}selected{% endif %}>
+                                    090853
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label for="activo">Estatus</label>
                             <select id="activo" name="activo" required>
                                 <option value="true" {% if usuario_edicion.activo %}selected{% endif %}>Activo</option>
@@ -113,6 +128,15 @@
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label for="mac_asignado">MAC asignado</label>
+                            <select id="mac_asignado" name="mac_asignado">
+                                <option value="">-- Sin restricción (Admin) --</option>
+                                <option value="090852">090852</option>
+                                <option value="090853">090853</option>
+                            </select>
+                        </div>
+
                         <div class="actions">
                             <button type="submit" class="btn btn-primary">Crear usuario</button>
                         </div>
@@ -131,6 +155,7 @@
                                 <th>Usuario</th>
                                 <th>Nombre completo</th>
                                 <th>Rol</th>
+                                <th>MAC</th>
                                 <th>Estatus</th>
                                 <th>Acciones</th>
                             </tr>
@@ -142,6 +167,7 @@
                                     <td>{{ usuario.username }}</td>
                                     <td>{{ usuario.nombre_completo }}</td>
                                     <td>{{ usuario.rol }}</td>
+                                    <td>{{ usuario.mac_asignado if usuario.mac_asignado else '-' }}</td>
                                     <td>
                                         {% if usuario.activo %}
                                             <span class="badge badge-success">Activo</span>
