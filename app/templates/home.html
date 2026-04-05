@@ -33,7 +33,11 @@
             <input type="hidden" name="expected_tipo" value="TIEMPOS_SOL">
             <input type="file" name="archivo" class="form-control" required>
             <button type="submit" class="btn btn-primary">Subir SOL</button>
+            {% if resumen and resumen.fuente_sol != "Sin reporte" %}
+            <span class="badge bg-success">Cargado</span>
+        {% else %}
             <span class="badge bg-secondary">Pendiente</span>
+        {% endif %}
         </form>
     </div>
 
@@ -43,7 +47,11 @@
                 <input type="hidden" name="expected_tipo" value="TIEMPOS_CR">
                 <input type="file" name="archivo" class="form-control" required>
                 <button type="submit" class="btn btn-primary">Subir CR</button>
+                {% if resumen and resumen.fuente_cr != "Sin reporte" %}
+                <span class="badge bg-success">Cargado</span>
+            {% else %}
                 <span class="badge bg-secondary">Pendiente</span>
+            {% endif %}
             </form>
         </div>
     </div>
