@@ -91,8 +91,9 @@ def guardar_sol_en_bd(df, archivo_id, nombre_original, mac):
     with engine.begin() as conn:
         for _, row in df_trabajo.iterrows():
             fecha_tramite = _parse_fecha(row.get("FECHA DE TRAMITE"))
-            if fecha_operativa_global is None and fecha_tramite is not None:
-                fecha_operativa_global = fecha_tramite
+            if fecha_tramite is not None:
+                if fecha_operativa_global is None or fecha_tramite > fecha_operativa_global:
+                    fecha_operativa_global = fecha_tramite
 
             folio = _valor_limpio(row.get("SOLICITUD"))
             tipo_tramite = _valor_limpio(row.get(columna_tipo)) if columna_tipo else None

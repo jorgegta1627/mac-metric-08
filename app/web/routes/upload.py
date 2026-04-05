@@ -36,6 +36,7 @@ async def subir_archivo(
     expected_tipo: str = Form(None),
     archivo: UploadFile = File(...)
 ):
+    sesion = validar_sesion(request)
     if sesion:
         return sesion
 
@@ -56,13 +57,35 @@ async def subir_archivo(
     role_id = request.session.get("role_id")
     mac_usuario = request.session.get("mac_asignado")
 
+    if expected_tipo and tipo != expected_tipo:
+        tipo_legible = "SOL" if tipo == "TIEMPOS_SOL" else "CR" if tipo == "TIEMPOS_CR" else tipo
+        expected_legible = "SOL" if expected_tipo == "TIEMPOS_SOL" else "CR" if expected_tipo == "TIEMPOS_CR" else expected_tipo
+
+        return RedirectResponse(
+            url=f"/dashboard?error=El+archivo+seleccionado+corresponde+a+{tipo_legible}+y+no+a+{expected_legible}",
+            status_code=303
+        )
+
     # Validación por MAC asignado
-    if role_id != 1:
-        if mac_usuario and mac != mac_usuario:
+    if str(role_id) != "1":
+        if mac == "DESCONOCIDO":
+            return RedirectResponse(
+                url="/dashboard?error=No+se+pudo+identificar+el+MAC+del+archivo",
+                status_code=303
+            )
+
+        if not mac_usuario:
+            return RedirectResponse(
+                url="/dashboard?error=Tu+usuario+no+tiene+MAC+asignado",
+                status_code=303
+            )
+
+        if mac != mac_usuario:
             return RedirectResponse(
                 url="/dashboard?error=No+puedes+subir+archivos+de+otro+MAC",
                 status_code=303
             )
+
     archivo_id = None
 
     try:
@@ -164,11 +187,11 @@ async def subir_archivo(
                         }
                     )
 
+                mensaje = f"SOL | MAC {mac} | Fecha {resultado_guardado.get('fecha_operativa')} | Registros {resultado_guardado.get('insertados_tramites', 0)}"
                 return RedirectResponse(
-                    url="/dashboard?success=Archivo+SOL+cargado+y+procesado+correctamente",
+                    url=f"/dashboard?success={mensaje.replace(' ', '+')}",
                     status_code=303
                 )
-
             except Exception as e:
                 with engine.begin() as conn:
                     conn.execute(
@@ -239,8 +262,9 @@ async def subir_archivo(
                                 }
                             )
 
+                        mensaje = f"CR | MAC {mac} | Fecha {resultado_guardado.get('fecha_operativa')} | Registros {resultado_guardado.get('insertados_entregas', 0)}"
                         return RedirectResponse(
-                            url="/dashboard?success=Archivo+CR+cargado+y+procesado+correctamente",
+                            url=f"/dashboard?success={mensaje.replace(' ', '+')}",
                             status_code=303
                         )
 

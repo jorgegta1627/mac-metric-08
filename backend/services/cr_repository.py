@@ -63,8 +63,9 @@ def guardar_cr_en_bd(df, archivo_id, nombre_original, mac):
     with engine.begin() as conn:
         for _, row in df_trabajo.iterrows():
             fecha_entrega = _parse_fecha(row.get("fecha_entrega"))
-            if fecha_operativa_global is None and fecha_entrega is not None:
-                fecha_operativa_global = fecha_entrega
+            if fecha_entrega is not None:
+                if fecha_operativa_global is None or fecha_entrega > fecha_operativa_global:
+                    fecha_operativa_global = fecha_entrega
 
             solicitud = _valor_limpio(row.get("solicitud"))
             folio_nec = _valor_limpio(row.get("folio_nec"))
