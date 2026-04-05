@@ -15,7 +15,12 @@ def validar_sesion(request: Request):
 
 
 @router.get("/dashboard")
-def dashboard_view(request: Request, mac: str = None, fecha: str = None):
+def dashboard_view(
+    request: Request,
+    mac: str = None,
+    fecha: str = None,
+    modo_consulta: str = "ultimo"
+    ):
     sesion = validar_sesion(request)
     if sesion:
         return sesion
@@ -23,8 +28,14 @@ def dashboard_view(request: Request, mac: str = None, fecha: str = None):
     success = request.query_params.get("success")
     error = request.query_params.get("error")
 
+    role_id = request.session.get("role_id")
+    mac_asignado = request.session.get("mac_asignado")
+
+    if str(role_id) != "1":
+        mac = mac_asignado
+
     mac_seleccionado = mac or ""
-    fecha_seleccionada = fecha or ""
+    fecha_seleccionada = fecha if modo_consulta == "fecha" else ""
 
     resumen = obtener_resumen_dashboard_db(
         mac=mac_seleccionado if mac_seleccionado else None,
@@ -79,5 +90,6 @@ def dashboard_view(request: Request, mac: str = None, fecha: str = None):
         "current_user": request.session.get("user"),
         "role_id": request.session.get("role_id"),
         "mac_asignado": request.session.get("mac_asignado"),
+        "modo_consulta": modo_consulta,
             },
     )

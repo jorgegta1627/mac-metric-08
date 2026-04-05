@@ -49,7 +49,16 @@ async def subir_archivo(request: Request, archivo: UploadFile = File(...)):
     mac = detectar_mac(nombre_original)
     tipo = detectar_tipo(nombre_original)
     usuario_carga = request.session.get("user")
+    role_id = request.session.get("role_id")
+    mac_usuario = request.session.get("mac_asignado")
 
+    # Validación por MAC asignado
+    if role_id != 1:
+        if mac_usuario and mac != mac_usuario:
+            return RedirectResponse(
+                url="/dashboard?error=No+puedes+subir+archivos+de+otro+MAC",
+                status_code=303
+            )
     archivo_id = None
 
     try:

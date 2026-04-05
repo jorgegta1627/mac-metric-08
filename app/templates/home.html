@@ -13,58 +13,37 @@
         </div>
     </div>
 
-    <div class="card upload-card mb-4">
-        <div class="card-body">
-            <div class="section-head mb-3">
-                <h5 class="section-title mb-0">Carga de archivos</h5>
-            </div>
+<div class="card upload-card mb-4">
+    <div class="card-body">
+        <div class="section-head mb-3">
+            <h5 class="section-title mb-0">Carga de archivos</h5>
+        </div>
 
-            {% if success %}
-                <div class="alert alert-success">{{ success }}</div>
-            {% endif %}
+        {% if success %}
+            <div class="alert alert-success">{{ success }}</div>
+        {% endif %}
 
-            {% if error %}
-                <div class="alert alert-danger">{{ error }}</div>
-            {% endif %}
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
 
-            <div class="mb-3">
-                <label class="form-label">MAC</label>
-
-                {% if role_id|string == '1' %}
-                    <select id="mac_carga" class="form-select">
-                        <option value="">Seleccionar MAC</option>
-                        <option value="090852">090852</option>
-                        <option value="090853">090853</option>
-                    </select>
-                {% else %}
-                    <input type="text" class="form-control" value="{{ mac_asignado }}" readonly>
-                    <input type="hidden" id="mac_carga" value="{{ mac_asignado }}">
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Archivo SOL (trámites)</label>
-                <div class="d-flex gap-2 align-items-center">
-                    <input type="file" id="archivo_sol" class="form-control">
-                    <button type="button" class="btn btn-primary" onclick="subirArchivo('SOL')">
-                        Subir SOL
-                    </button>
-                    <span id="status_sol" class="badge bg-secondary">Pendiente</span>
-                </div>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Archivo SOL (trámites)</label>
+            <form action="/upload" method="post" enctype="multipart/form-data" class="d-flex gap-2 align-items-center">
+                <input type="file" name="archivo" class="form-control" required>
+                <button type="submit" class="btn btn-primary">Subir SOL</button>
+                <span class="badge bg-secondary">Pendiente</span>
+            </form>
+        </div>
 
         <div class="mb-3">
             <label class="form-label">Archivo CR (entregas)</label>
-            <div class="d-flex gap-2 align-items-center">
-                <input type="file" id="archivo_cr" class="form-control">
-                <button type="button" class="btn btn-primary" onclick="subirArchivo('CR')">
-                    Subir CR
-                </button>
-                <span id="status_cr" class="badge bg-secondary">Pendiente</span>
-            </div>
+            <form action="/upload" method="post" enctype="multipart/form-data" class="d-flex gap-2 align-items-center">
+                <input type="file" name="archivo" class="form-control" required>
+                <button type="submit" class="btn btn-primary">Subir CR</button>
+                <span class="badge bg-secondary">Pendiente</span>
+            </form>
         </div>
-
-        <div id="mensaje_carga" class="mt-3"></div>
     </div>
 </div>
 
@@ -77,12 +56,12 @@
                     </div>
 
                     <form method="get" action="/dashboard" class="query-form">
-                        <div class="mb-3">
+                         <div class="mb-3">
                             <label for="mac" class="form-label">MAC</label>
 
                             {% if role_id|string == '1' %}
-                                <select name="mac" id="mac" class="form-select">
-                                    <option value="">Último disponible</option>
+                                <select name="mac" id="mac" class="form-select" required>
+                                    <option value="">Seleccionar MAC</option>
                                     <option value="090852" {% if mac_seleccionado == "090852" %}selected{% endif %}>090852</option>
                                     <option value="090853" {% if mac_seleccionado == "090853" %}selected{% endif %}>090853</option>
                                 </select>
@@ -101,7 +80,39 @@
                             {% endif %}
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-3">
+                            <label class="form-label d-block">Tipo de consulta</label>
+
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="modo_consulta"
+                                    id="modo_ultimo"
+                                    value="ultimo"
+                                    {% if not fecha_seleccionada %}checked{% endif %}
+                                >
+                                <label class="form-check-label" for="modo_ultimo">
+                                    Último disponible
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="modo_consulta"
+                                    id="modo_fecha"
+                                    value="fecha"
+                                    {% if fecha_seleccionada %}checked{% endif %}
+                                >
+                                <label class="form-check-label" for="modo_fecha">
+                                    Por fecha
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4" id="bloque_fecha">
                             <label for="fecha" class="form-label">Fecha operativa</label>
                             <input
                                 type="date"
@@ -318,55 +329,25 @@
 </div>
 {% endif %}
 <script>
-function subirArchivo(tipo) {
-    const mac = document.getElementById("mac_carga").value;
+document.addEventListener("DOMContentLoaded", function () {
+    const radioUltimo = document.getElementById("modo_ultimo");
+    const radioFecha = document.getElementById("modo_fecha");
+    const bloqueFecha = document.getElementById("bloque_fecha");
+    const inputFecha = document.getElementById("fecha");
 
-    if (!mac) {
-        alert("Selecciona un MAC antes de cargar");
-        return;
-    }
-
-    let input = tipo === "SOL"
-        ? document.getElementById("archivo_sol")
-        : document.getElementById("archivo_cr");
-
-    if (!input.files.length) {
-        alert("Selecciona un archivo");
-        return;
-    }
-
-    let formData = new FormData();
-    formData.append("archivo", input.files[0]);
-    formData.append("tipo", tipo);
-    formData.append("mac", mac);
-
-    fetch("/upload", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        let status = tipo === "SOL"
-            ? document.getElementById("status_sol")
-            : document.getElementById("status_cr");
-
-        if (data.success) {
-            status.className = "badge bg-success";
-            status.innerText = "Cargado";
-
-            document.getElementById("mensaje_carga").innerHTML =
-                `<div class="alert alert-success">${data.message}</div>`;
+    function actualizarVistaFecha() {
+        if (radioFecha.checked) {
+            bloqueFecha.style.display = "block";
         } else {
-            status.className = "badge bg-danger";
-            status.innerText = "Error";
-
-            document.getElementById("mensaje_carga").innerHTML =
-                `<div class="alert alert-danger">${data.error}</div>`;
+            bloqueFecha.style.display = "none";
+            inputFecha.value = "";
         }
-    })
-    .catch(() => {
-        alert("Error al subir archivo");
-    });
-}
+    }
+
+    radioUltimo.addEventListener("change", actualizarVistaFecha);
+    radioFecha.addEventListener("change", actualizarVistaFecha);
+
+    actualizarVistaFecha();
+});
 </script>
 {% endblock %}
