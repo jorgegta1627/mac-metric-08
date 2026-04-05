@@ -27,12 +27,46 @@
                 <div class="alert alert-danger">{{ error }}</div>
             {% endif %}
 
-            <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
-                <input type="file" name="archivo" class="form-control" required>
-                <button type="submit" class="btn btn-primary">Subir archivo</button>
-            </form>
+            <div class="mb-3">
+                <label class="form-label">MAC</label>
+
+                {% if role_id|string == '1' %}
+                    <select id="mac_carga" class="form-select">
+                        <option value="">Seleccionar MAC</option>
+                        <option value="090852">090852</option>
+                        <option value="090853">090853</option>
+                    </select>
+                {% else %}
+                    <input type="text" class="form-control" value="{{ mac_asignado }}" readonly>
+                    <input type="hidden" id="mac_carga" value="{{ mac_asignado }}">
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Archivo SOL (trámites)</label>
+                <div class="d-flex gap-2 align-items-center">
+                    <input type="file" id="archivo_sol" class="form-control">
+                    <button type="button" class="btn btn-primary" onclick="subirArchivo('SOL')">
+                        Subir SOL
+                    </button>
+                    <span id="status_sol" class="badge bg-secondary">Pendiente</span>
+                </div>
+            </div>
+
+        <div class="mb-3">
+            <label class="form-label">Archivo CR (entregas)</label>
+            <div class="d-flex gap-2 align-items-center">
+                <input type="file" id="archivo_cr" class="form-control">
+                <button type="button" class="btn btn-primary" onclick="subirArchivo('CR')">
+                    Subir CR
+                </button>
+                <span id="status_cr" class="badge bg-secondary">Pendiente</span>
+            </div>
         </div>
+
+        <div id="mensaje_carga" class="mt-3"></div>
     </div>
+</div>
 
     <div class="dashboard-grid">
         <aside class="dashboard-sidebar">
@@ -283,4 +317,56 @@
     No fue posible cargar CR: {{ cr_resultado.error }}
 </div>
 {% endif %}
+<script>
+function subirArchivo(tipo) {
+    const mac = document.getElementById("mac_carga").value;
+
+    if (!mac) {
+        alert("Selecciona un MAC antes de cargar");
+        return;
+    }
+
+    let input = tipo === "SOL"
+        ? document.getElementById("archivo_sol")
+        : document.getElementById("archivo_cr");
+
+    if (!input.files.length) {
+        alert("Selecciona un archivo");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("archivo", input.files[0]);
+    formData.append("tipo", tipo);
+    formData.append("mac", mac);
+
+    fetch("/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        let status = tipo === "SOL"
+            ? document.getElementById("status_sol")
+            : document.getElementById("status_cr");
+
+        if (data.success) {
+            status.className = "badge bg-success";
+            status.innerText = "Cargado";
+
+            document.getElementById("mensaje_carga").innerHTML =
+                `<div class="alert alert-success">${data.message}</div>`;
+        } else {
+            status.className = "badge bg-danger";
+            status.innerText = "Error";
+
+            document.getElementById("mensaje_carga").innerHTML =
+                `<div class="alert alert-danger">${data.error}</div>`;
+        }
+    })
+    .catch(() => {
+        alert("Error al subir archivo");
+    });
+}
+</script>
 {% endblock %}
