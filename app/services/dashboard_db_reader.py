@@ -38,11 +38,18 @@ def obtener_archivo_sol(mac=None, fecha_operativa=None):
         nombre_archivo,
         mac,
         fecha_operativa,
-        fecha_carga
+        fecha_carga,
+        tipo_periodo
     FROM macmetric.archivos_cargados
     WHERE {where_sql}
     ORDER BY
+        CASE
+            WHEN tipo_periodo = 'DIARIO' THEN 0
+            WHEN tipo_periodo = 'SEMANAL' THEN 1
+            ELSE 2
+        END,
         fecha_operativa DESC NULLS LAST,
+        fecha_carga DESC NULLS LAST,
         id DESC
     LIMIT 1
     """
@@ -77,11 +84,18 @@ def obtener_archivo_cr(mac=None, fecha_operativa=None):
         nombre_archivo,
         mac,
         fecha_operativa,
-        fecha_carga
+        fecha_carga,
+        tipo_periodo
     FROM macmetric.archivos_cargados
     WHERE {where_sql}
     ORDER BY
+        CASE
+            WHEN tipo_periodo = 'DIARIO' THEN 0
+            WHEN tipo_periodo = 'SEMANAL' THEN 1
+            ELSE 2
+        END,
         fecha_operativa DESC NULLS LAST,
+        fecha_carga DESC NULLS LAST,
         id DESC
     LIMIT 1
     """
