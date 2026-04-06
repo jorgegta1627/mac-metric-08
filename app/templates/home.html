@@ -65,17 +65,17 @@
             <h6 class="section-title section-title--sm mb-0">Resumen de la consulta</h6>
         </div>
 
-        <div class="source-grid" style="font-size: 1.50rem;">
+        <div class="source-grid" style="font-size: .99 rem;">
                 <div class="source-item">
                     <span class="source-label">SOL (trámites)</span>
                     <span class="source-value">{{ resumen.fuente_sol }}</span>
-                    <small class="text-muted d-block">Periodo: {{ resumen.tipo_periodo_sol }}</small>
+                    <span class="source-meta">Periodo: {{ resumen.tipo_periodo_sol }}</span>
                 </div>
 
                 <div class="source-item">
                     <span class="source-label">CR (entregas)</span>
                     <span class="source-value">{{ resumen.fuente_cr }}</span>
-                    <small class="text-muted d-block">Periodo: {{ resumen.tipo_periodo_cr }}</small>
+                    <span class="source-meta">Periodo: {{ resumen.tipo_periodo_cr }}</span>
                 </div>
 
                 <div class="source-item">
