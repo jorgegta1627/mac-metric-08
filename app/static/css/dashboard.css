@@ -1,5 +1,5 @@
 .dashboard-page {
-    min-height: 100vh;
+    min-height: auto;
     padding-bottom: 32px;
     background:
         linear-gradient(135deg, rgba(255, 88, 188, 0.08), rgba(149, 0, 84, 0.10)),
