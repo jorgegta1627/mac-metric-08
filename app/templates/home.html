@@ -66,24 +66,27 @@
         </div>
 
         <div class="source-grid" style="font-size: 0.85rem;">
-            <div class="source-item">
-                <span class="source-label">SOL (trámites)</span>
-                <span class="source-value">{{ resumen.fuente_sol }}</span>
-            </div>
+                <div class="source-item">
+                    <span class="source-label">SOL (trámites)</span>
+                    <span class="source-value">{{ resumen.fuente_sol }}</span>
+                    <small class="text-muted d-block">Periodo: {{ resumen.tipo_periodo_sol }}</small>
+                </div>
 
-            <div class="source-item">
-                <span class="source-label">CR (entregas)</span>
-                <span class="source-value">{{ resumen.fuente_cr }}</span>
-            </div>
+                <div class="source-item">
+                    <span class="source-label">CR (entregas)</span>
+                    <span class="source-value">{{ resumen.fuente_cr }}</span>
+                    <small class="text-muted d-block">Periodo: {{ resumen.tipo_periodo_cr }}</small>
+                </div>
 
-            <div class="source-item">
-                <span class="source-label">MAC consultado</span>
-                <span class="source-value">{{ resumen.mac }}</span>
-            </div>
+                <div class="source-item">
+                    <span class="source-label">MAC consultado</span>
+                    <span class="source-value">{{ resumen.mac }}</span>
+                </div>
 
-            <div class="source-item">
-                <span class="source-label">Fecha operativa</span>
-                <span class="source-value">{{ resumen.fecha_operativa }}</span>
+                <div class="source-item">
+                    <span class="source-label">Fecha operativa</span>
+                    <span class="source-value">{{ resumen.fecha_operativa }}</span>
+                </div>
             </div>
         </div>
     </div>

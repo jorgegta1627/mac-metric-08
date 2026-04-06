@@ -306,6 +306,8 @@ def obtener_resumen_dashboard_db(mac=None, fecha_operativa=None):
         "archivo_id": archivo_sol["id"] if archivo_sol else None,
         "fuente_sol": archivo_sol["nombre_archivo"] if archivo_sol else "Sin reporte",
         "fuente_cr": archivo_cr["nombre_archivo"] if archivo_cr else "Sin reporte",
+        "tipo_periodo_sol": archivo_sol["tipo_periodo"] if archivo_sol and archivo_sol.get("tipo_periodo") else "Sin dato",
+        "tipo_periodo_cr": archivo_cr["tipo_periodo"] if archivo_cr and archivo_cr.get("tipo_periodo") else "Sin dato",
         "mac": (archivo_sol["mac"] if archivo_sol else archivo_cr["mac"]) if (archivo_sol or archivo_cr) else "Sin datos",
         "fecha_operativa": (
             archivo_sol["fecha_operativa"] if archivo_sol else archivo_cr["fecha_operativa"]
