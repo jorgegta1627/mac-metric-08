@@ -54,18 +54,30 @@ def guardar_cr_en_bd(df, archivo_id, nombre_original, mac):
         return {
             "insertados_entregas": 0,
             "fecha_operativa": None,
+            "tipo_periodo": None,
+            "fecha_inicio": None,
+            "fecha_fin": None,
         }
 
     df_trabajo = df.copy()
     insertados_entregas = 0
     fecha_operativa_global = None
+    fecha_min = None
+    fecha_max = None
 
     with engine.begin() as conn:
         for _, row in df_trabajo.iterrows():
             fecha_entrega = _parse_fecha(row.get("fecha_entrega"))
+
             if fecha_entrega is not None:
                 if fecha_operativa_global is None or fecha_entrega > fecha_operativa_global:
                     fecha_operativa_global = fecha_entrega
+
+                if fecha_min is None or fecha_entrega < fecha_min:
+                    fecha_min = fecha_entrega
+
+                if fecha_max is None or fecha_entrega > fecha_max:
+                    fecha_max = fecha_entrega
 
             solicitud = _valor_limpio(row.get("solicitud"))
             folio_nec = _valor_limpio(row.get("folio_nec"))
@@ -154,7 +166,14 @@ def guardar_cr_en_bd(df, archivo_id, nombre_original, mac):
 
             insertados_entregas += 1
 
+    tipo_periodo = "DIARIO"
+    if fecha_min and fecha_max and fecha_min != fecha_max:
+        tipo_periodo = "SEMANAL"
+
     return {
         "insertados_entregas": insertados_entregas,
         "fecha_operativa": fecha_operativa_global,
+        "tipo_periodo": tipo_periodo,
+        "fecha_inicio": fecha_min,
+        "fecha_fin": fecha_max,
     }

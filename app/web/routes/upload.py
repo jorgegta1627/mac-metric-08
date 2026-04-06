@@ -173,6 +173,9 @@ async def subir_archivo(
                             SET estatus = :estatus,
                                 mensaje_error = :mensaje_error,
                                 fecha_operativa = :fecha_operativa,
+                                fecha_inicio = :fecha_inicio,
+                                fecha_fin = :fecha_fin,
+                                tipo_periodo = :tipo_periodo,
                                 registros_insertados = :registros_insertados,
                                 nombre_reporte_generado = :nombre_reporte_generado
                             WHERE id = :id
@@ -182,6 +185,9 @@ async def subir_archivo(
                             "estatus": "PROCESADO",
                             "mensaje_error": None,
                             "fecha_operativa": resultado_guardado.get("fecha_operativa"),
+                            "fecha_inicio": resultado_guardado.get("fecha_inicio"),
+                            "fecha_fin": resultado_guardado.get("fecha_fin"),
+                            "tipo_periodo": resultado_guardado.get("tipo_periodo"),
                             "registros_insertados": resultado_guardado.get("insertados_tramites", 0),
                             "nombre_reporte_generado": str(ruta_reporte),
                         }
@@ -250,6 +256,9 @@ async def subir_archivo(
                                     SET estatus = :estatus,
                                         mensaje_error = :mensaje_error,
                                         fecha_operativa = :fecha_operativa,
+                                        fecha_inicio = :fecha_inicio,
+                                        fecha_fin = :fecha_fin,
+                                        tipo_periodo = :tipo_periodo,
                                         registros_insertados = :registros_insertados
                                     WHERE id = :id
                                 """),
@@ -258,6 +267,9 @@ async def subir_archivo(
                                     "estatus": "PROCESADO",
                                     "mensaje_error": None,
                                     "fecha_operativa": resultado_guardado.get("fecha_operativa"),
+                                    "fecha_inicio": resultado_guardado.get("fecha_inicio"),
+                                    "fecha_fin": resultado_guardado.get("fecha_fin"),
+                                    "tipo_periodo": resultado_guardado.get("tipo_periodo"),
                                     "registros_insertados": resultado_guardado.get("insertados_entregas", 0),
                                 }
                             )
